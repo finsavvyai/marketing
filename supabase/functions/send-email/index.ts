@@ -24,8 +24,8 @@ Deno.serve(async (req) => {
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
     const { data, error } = await resend.emails.send({
-      from: 'PipeWarden Beta <beta@pipewarden.com>',
-      to: ['info@pipewarden.com'],
+      from: 'PipeWarden Beta <beta@pipewarden.io>',
+      to: ['info@pipewarden.io'],
       subject: 'New Beta Program Application',
       html: `
         <h2>New Beta Application</h2>

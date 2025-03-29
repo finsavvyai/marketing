@@ -378,7 +378,7 @@ export function BetaForm() {
             </p>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg my-4">
               <p className="font-medium text-blue-800 dark:text-blue-300">
-                For immediate assistance, email us at <span className="font-bold">enterprise@pipewarden.com</span>
+                For immediate assistance, email us at <span className="font-bold">enterprise@pipewarden.io</span>
               </p>
             </div>
             <div className="flex items-center justify-center mt-4">

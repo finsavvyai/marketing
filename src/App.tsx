@@ -614,7 +614,7 @@ export default function App() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 mt-8 text-center text-gray-400">
-            <p>&copy; 2025 PipeWarden.com. All rights reserved.</p>
+            <p>&copy; 2025 pipewarden.io. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -623,7 +623,7 @@ export default function App() {
       <VideoModal 
         isOpen={isVideoModalOpen} 
         onClose={() => setIsVideoModalOpen(false)} 
-        videoSrc="./pipewarden-video.mp4" 
+        videoSrc="https://pipewarden.s3.eu-west-2.amazonaws.com/pipewarden-video.mp4" 
       />
     </>
   );

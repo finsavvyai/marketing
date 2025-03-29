@@ -18,7 +18,7 @@ export const SEO = ({
   schema,
 }: SEOProps) => {
   // Base URL - replace with actual domain in production
-  const baseUrl = 'https://pipewarden.com';
+  const baseUrl = 'https://pipewarden.io';
   const url = canonicalUrl ? `${baseUrl}${canonicalUrl}` : baseUrl;
   
   // Default keywords relevant to CI/CD security
