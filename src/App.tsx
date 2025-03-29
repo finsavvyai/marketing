@@ -17,12 +17,13 @@ import {
   Bot,
   BarChart
 } from 'lucide-react';
+import { SEO } from './components/SEO';
 import { AnimatedSection } from './components/AnimatedSection';
 import { BetaForm } from './components/BetaForm';
 import { IntegrationCard } from './components/IntegrationCard';
 import { StepCard } from './components/StepCard';
 
-function App() {
+export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -181,8 +182,43 @@ function App() {
     }
   ];
 
+  // Structured data for organization
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PipeWarden",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any",
+    "description": "PipeWarden secures your CI/CD pipelines with automated security scanning, compliance monitoring, and vulnerability detection to protect your software delivery process.",
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "USD",
+      "highPrice": "999",
+      "lowPrice": "99",
+      "offerCount": "3"
+    },
+    "featureList": "CI/CD Security, Pipeline Monitoring, Vulnerability Scanning, DevSecOps Automation, Compliance Reporting"
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+    <>
+      <SEO
+        title="PipeWarden | Secure CI/CD Pipeline Security Solution"
+        description="PipeWarden protects your CI/CD pipelines with automated security scanning, compliance monitoring, and vulnerability detection. Secure your software delivery process today."
+        canonicalUrl="/"
+        keywords={[
+          'CI/CD pipeline security',
+          'secure software delivery',
+          'pipeline vulnerability detection',
+          'automated security scans',
+          'devsecops tool',
+          'compliance automation',
+          'software supply chain security',
+          'pipeline security monitoring'
+        ]}
+        schema={organizationSchema}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
       {/* Navigation */}
       <nav className="fixed w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg z-50 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -403,15 +439,16 @@ function App() {
                       </li>
                     ))}
                   </ul>
-                  <button
-                    className={`w-full py-3 rounded-lg font-semibold ${
+                  <a
+                    href={`/get-started?plan=${encodeURIComponent(tier.name)}`}
+                    className={`w-full py-3 rounded-lg font-semibold text-center block ${
                       tier.popular
                         ? 'bg-white text-primary-600 hover:bg-gray-100'
                         : 'bg-primary-600 text-white hover:bg-primary-700'
                     } transition-colors`}
                   >
                     Get Started
-                  </button>
+                  </a>
                 </div>
               </AnimatedSection>
             ))}
@@ -508,7 +545,6 @@ function App() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
-
-export default App;

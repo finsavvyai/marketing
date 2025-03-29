@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CheckCircle, Calendar } from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -11,7 +12,8 @@ interface FormData {
   currentChallenges: string;  
   securityChallenges: string; // Added for specific security challenges question
   securityTools: string[];  
-  howHeard: string;  
+  howHeard: string;
+  pricingPlan: string; // Added for pricing plan selection
 }
 
 export function BetaForm() {
@@ -27,6 +29,7 @@ export function BetaForm() {
     securityChallenges: '',
     securityTools: [],
     howHeard: '',
+    pricingPlan: '',
   });
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -90,8 +93,25 @@ export function BetaForm() {
       newErrors.platforms = 'Please select at least one CI/CD platform';
     }
     
+    if (!formData.pricingPlan) {
+      newErrors.pricingPlan = 'Please select a pricing plan';
+    }
+    
     return newErrors;
   };
+
+  // Check for selected plan on component mount
+  useEffect(() => {
+    // Check if there's a selected plan in sessionStorage
+    const selectedPlan = sessionStorage.getItem('selectedPlan');
+    if (selectedPlan) {
+      setFormData(prev => ({ ...prev, pricingPlan: selectedPlan }));
+      // Mark the field as touched since it was auto-filled
+      setTouched(prev => ({ ...prev, pricingPlan: true }));
+      // Clear the session storage to avoid affecting future visits to the form
+      sessionStorage.removeItem('selectedPlan');
+    }
+  }, []);
 
   // Check if form is valid when fields change
   useEffect(() => {
@@ -251,6 +271,12 @@ export function BetaForm() {
         form.appendChild(toolInput);
       }
       
+      const pricingPlanInput = document.createElement('input');
+      pricingPlanInput.type = 'hidden';
+      pricingPlanInput.name = 'entry.1234567890'; // Replace with actual Google Form field ID
+      pricingPlanInput.value = formData.pricingPlan;
+      form.appendChild(pricingPlanInput);
+      
       const howHeardInput = document.createElement('input');
       howHeardInput.type = 'hidden';
       howHeardInput.name = HOW_HEARD_ID;
@@ -280,6 +306,7 @@ export function BetaForm() {
         securityChallenges: '',
         securityTools: [],
         howHeard: '',
+        pricingPlan: '',
       });
     } catch (error) {
       setStatus('error');
@@ -320,15 +347,75 @@ export function BetaForm() {
     }
   };
 
+  // Generate payment URLs based on selected plan
+  const getPaymentUrl = (plan: string): string => {
+    // These would be replaced with actual payment processing URLs in production
+    switch (plan) {
+      case 'Starter':
+        return 'https://checkout.stripe.com/pay/pipewarden/starter';
+      case 'Professional':
+        return 'https://checkout.stripe.com/pay/pipewarden/professional';
+      default:
+        return '';
+    }
+  };
+
   if (status === 'success') {
     return (
-      <div className="bg-green-50 dark:bg-green-900 p-6 rounded-lg text-center">
-        <h3 className="text-xl font-semibold text-green-900 dark:text-green-100 mb-2">
+      <div className="p-6 rounded-lg shadow-md bg-white dark:bg-gray-800 text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 mb-6">
+          <CheckCircle className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+        </div>
+        
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
           Thank you for your interest in PipeWarden!
         </h3>
-        <p className="text-green-800 dark:text-green-200">
-          We've received your application for the beta program. We'll review your submission and be in touch soon with next steps.
-        </p>
+        
+        {formData.pricingPlan === 'Enterprise' ? (
+          <div className="space-y-4">
+            <p className="text-gray-600 dark:text-gray-300">
+              Our team will contact you within 1-2 business days to discuss your custom Enterprise requirements.
+            </p>
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg my-4">
+              <p className="font-medium text-blue-800 dark:text-blue-300">
+                For immediate assistance, email us at <span className="font-bold">enterprise@pipewarden.com</span>
+              </p>
+            </div>
+            <div className="flex items-center justify-center mt-4">
+              <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400 mr-2" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">A calendar invite will be sent to {formData.email}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-gray-600 dark:text-gray-300">
+              We've received your information for the <span className="font-semibold">{formData.pricingPlan}</span> plan. 
+              To complete your registration, please proceed to payment.
+            </p>
+            
+            <a 
+              href={getPaymentUrl(formData.pricingPlan)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md"
+            >
+              Complete Payment
+            </a>
+            
+            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg my-4">
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">What's Next?</h4>
+              <ul className="text-sm text-left text-gray-600 dark:text-gray-300 space-y-2 list-disc list-inside">
+                <li>After payment, you'll receive an email with account setup instructions</li>
+                <li>Our onboarding team will help you connect your CI/CD platforms</li>
+                <li>Start securing your pipelines within minutes</li>
+              </ul>
+            </div>
+            
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Payment instructions have also been sent to {formData.email}
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -583,6 +670,38 @@ export function BetaForm() {
         )}
       </div>
       
+      <div>
+        <label htmlFor="pricingPlan" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Interested Pricing Plan <span className="text-red-500">*</span>
+        </label>
+        <select
+          name="pricingPlan"
+          id="pricingPlan"
+          className={`mt-1 block w-full py-2.5 px-4 text-gray-800 dark:text-gray-200 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800/50 appearance-none bg-no-repeat bg-right ${errors.pricingPlan ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235e72e4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, 
+            backgroundSize: '1.5em 1.5em', 
+            paddingRight: '2.5rem', 
+            backgroundPosition: 'right 0.75rem center',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s ease-in-out'
+          }}
+          value={formData.pricingPlan}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          disabled={status === 'submitting'}
+          required
+        >
+          <option value="">Select...</option>
+          <option value="Starter">Starter ($499/month)</option>
+          <option value="Professional">Professional ($999/month)</option>
+          <option value="Enterprise">Enterprise (Custom)</option>
+        </select>
+        {errors.pricingPlan && touched.pricingPlan && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.pricingPlan}</p>
+        )}
+      </div>
+
       <div>
         <label htmlFor="howHeard" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           How did you hear about PipeWarden?
