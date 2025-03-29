@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Allow all crawlers to access all content
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://pipewarden.com/sitemap.xml
