@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Shield,
   GitBranch,
@@ -15,7 +15,8 @@ import {
   FileCheck,
   Plug,
   Bot,
-  BarChart
+  BarChart,
+  Play
 } from 'lucide-react';
 import { SEO } from './components/SEO';
 import { AnimatedSection } from './components/AnimatedSection';
@@ -23,9 +24,79 @@ import { BetaForm } from './components/BetaForm';
 import { IntegrationCard } from './components/IntegrationCard';
 import { StepCard } from './components/StepCard';
 
+// Video Modal Component
+const VideoModal = ({ isOpen, onClose, videoSrc }: { isOpen: boolean; onClose: () => void; videoSrc: string }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Handle closing the modal when clicking outside of it
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    // Handle ESC key to close modal
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+      
+      // Auto-play video when modal opens
+      if (videoRef.current) {
+        videoRef.current.play().catch(err => console.error('Auto-play failed:', err));
+      }
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = ''; // Restore scrolling when modal closes
+      
+      // Pause video when modal closes
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+      <div ref={modalRef} className="relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden max-w-4xl w-full max-h-[90vh]">
+        <button 
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 bg-black/50 text-white rounded-full p-1 hover:bg-black/70 transition-colors"
+          aria-label="Close modal"
+        >
+          <X size={24} />
+        </button>
+        <video 
+          ref={videoRef}
+          controls 
+          className="w-full h-full" 
+          src={videoSrc}
+          poster="/images/video-thumbnail.jpg"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -301,8 +372,11 @@ export default function App() {
                 <a href="#contact" className="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors inline-block">
                   Join Beta Program
                 </a>
-                <button className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                  Watch Demo
+                <button 
+                  onClick={() => setIsVideoModalOpen(true)} 
+                  className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                  <Play size={18} /> Watch Demo
                 </button>
               </div>
             </AnimatedSection>
@@ -545,6 +619,12 @@ export default function App() {
         </div>
       </footer>
     </div>
+      {/* Video Demo Modal */}
+      <VideoModal 
+        isOpen={isVideoModalOpen} 
+        onClose={() => setIsVideoModalOpen(false)} 
+        videoSrc="https://pipewarden.s3.eu-west-2.amazonaws.com/pipewarden-video.mp4" 
+      />
     </>
   );
 }
