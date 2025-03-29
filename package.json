@@ -6,8 +6,7 @@
   "homepage": "https://www.pipewarden.io",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "npm run clean-dist && gh-pages -d dist",
-    "clean-dist": "find dist -name '*.mp4' -o -name '*.mov' -o -name '*.avi' -o -name '*.mkv' -delete",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
