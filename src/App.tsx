@@ -469,6 +469,9 @@ function App() {
               <p className="text-gray-400">
                 Securing development pipelines with intelligent automation.
               </p>
+              <p className="mt-4 text-gray-400">
+                Contact us: <a href="mailto:info@pipewarden.com" className="hover:text-white">info@pipewarden.com</a>
+              </p>
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-4">Product</h4>
@@ -496,7 +499,7 @@ function App() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 mt-8 text-center text-gray-400">
-            <p>&copy; 2025 PipeWarden. All rights reserved.</p>
+            <p>&copy; 2025 PipeWarden.com. All rights reserved.</p>
           </div>
         </div>
       </footer>
