@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background shield with gradient -->
+  <path d="M256 448c0 0 160-80 160-200V100L256 40 96 100v148C96 368 256 448 256 448z" fill="url(#logo-gradient)" />
+  
+  <!-- Inner shield for depth -->
+  <path d="M256 400c0 0 120-60 120-150V125L256 75l-120 50v125C136 340 256 400 256 400z" fill="#ffffff" fill-opacity="0.15" />
+  
+  <!-- Lock/secure emblem in the center -->
+  <path d="M256 216c-17.673 0-32 14.327-32 32v32c0 17.673 14.327 32 32 32s32-14.327 32-32v-32c0-17.673-14.327-32-32-32z" fill="#ffffff" />
+  <path d="M304 248h-96v-16c0-26.51 21.49-48 48-48s48 21.49 48 48v16z" stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Text at the bottom -->
+  <text x="256" y="480" font-family="Arial, sans-serif" font-weight="bold" font-size="42" fill="#ffffff" text-anchor="middle">PipeWarden</text>
+  
+  <!-- Subtle highlight -->
+  <path d="M256 64L120 114V250c0 80 136 158 136 158" stroke="#ffffff" stroke-opacity="0.4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Define the gradient -->
+  <defs>
+    <linearGradient id="logo-gradient" x1="96" y1="40" x2="416" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5e72e4" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+</svg>

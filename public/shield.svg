@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#0284c7" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer shield with gradient -->
+  <path d="M16 28c0 0 10-5 10-12.5V6.25L16 2.5 6 6.25v9.25C6 21 16 28 16 28z" fill="url(#shield-gradient)" />
+  
+  <!-- Inner shield for depth -->
+  <path d="M16 25c0 0 7.5-3.75 7.5-9.375V8.688L16 5.875l-7.5 2.813v6.938C8.5 21.25 16 25 16 25z" fill="#ffffff" fill-opacity="0.15" />
+  
+  <!-- Lock/secure emblem in the center -->
+  <path d="M16 13.5c-1.105 0-2 .895-2 2v2c0 1.105.895 2 2 2s2-.895 2-2v-2c0-1.105-.895-2-2-2z" fill="#ffffff" />
+  <path d="M19 15.5h-6v-1c0-1.657 1.343-3 3-3s3 1.343 3 3v1z" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Subtle highlight -->
+  <path d="M16 4l-8.5 3.188V15c0 5 8.5 9.5 8.5 9.5" stroke="#ffffff" stroke-opacity="0.4" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Define the gradient -->
+  <defs>
+    <linearGradient id="shield-gradient" x1="6" y1="2.5" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5e72e4" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
 </svg>

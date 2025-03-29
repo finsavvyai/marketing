@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface FormData {
   name: string;
@@ -31,6 +31,8 @@ export function BetaForm() {
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const cicdPlatforms = [
     'GitHub Actions',
@@ -54,8 +56,83 @@ export function BetaForm() {
     'None yet'
   ];
 
+  // Validate form data and return errors
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    if (!formData.company.trim()) {
+      newErrors.company = 'Company name is required';
+    }
+    
+    if (!formData.role.trim()) {
+      newErrors.role = 'Your role is required';
+    }
+    
+    if (!formData.teamSize) {
+      newErrors.teamSize = 'Please select your team size';
+    }
+    
+    if (!formData.pipelines) {
+      newErrors.pipelines = 'Please select number of pipelines';
+    }
+    
+    if (formData.platforms.length === 0) {
+      newErrors.platforms = 'Please select at least one CI/CD platform';
+    }
+    
+    return newErrors;
+  };
+
+  // Check if form is valid when fields change
+  useEffect(() => {
+    const newErrors = validateForm();
+    // Only update errors for touched fields
+    const filteredErrors: Record<string, string> = {};
+    Object.keys(touched).forEach(key => {
+      if (touched[key] && newErrors[key]) {
+        filteredErrors[key] = newErrors[key];
+      }
+    });
+    setErrors(filteredErrors);
+  }, [formData, touched]);
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Mark all fields as touched
+    const allTouched: Record<string, boolean> = {};
+    Object.keys(formData).forEach(key => {
+      allTouched[key] = true;
+    });
+    setTouched(allTouched);
+    
+    // Validate all fields
+    const formErrors = validateForm();
+    setErrors(formErrors);
+    
+    // If there are errors, don't submit
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
+    
     setStatus('submitting');
     setErrorMessage('');
 
@@ -216,6 +293,14 @@ export function BetaForm() {
       ...prev,
       [name]: value,
     }));
+    
+    // Mark field as touched when changed
+    if (!touched[name]) {
+      setTouched(prev => ({
+        ...prev,
+        [name]: true,
+      }));
+    }
   };
 
   const handleMultiSelectChange = (item: string, field: 'platforms' | 'securityTools') => {
@@ -225,6 +310,14 @@ export function BetaForm() {
         ? prev[field].filter(p => p !== item)
         : [...prev[field], item],
     }));
+    
+    // Mark field as touched when changed
+    if (!touched[field]) {
+      setTouched(prev => ({
+        ...prev,
+        [field]: true,
+      }));
+    }
   };
 
   if (status === 'success') {
@@ -244,62 +337,75 @@ export function BetaForm() {
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Name
+          Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           name="name"
           id="name"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.name ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
           value={formData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         />
+        {errors.name && touched.name && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.name}</p>
+        )}
       </div>
       
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Email
+          Email <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
           name="email"
           id="email"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.email ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
           value={formData.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         />
+        {errors.email && touched.email && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.email}</p>
+        )}
       </div>
       
       <div>
         <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Company
+          Company <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           name="company"
           id="company"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.company ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
           value={formData.company}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         />
+        {errors.company && touched.company && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.company}</p>
+        )}
       </div>
       
       <div>
         <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Your Role
+          Your Role <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           name="role"
           id="role"
           placeholder="e.g., DevOps Engineer, Security Lead, CTO"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.role ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+          onBlur={handleBlur}
           value={formData.role}
           onChange={handleChange}
           disabled={status === 'submitting'}
@@ -308,14 +414,23 @@ export function BetaForm() {
       
       <div>
         <label htmlFor="teamSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Development Team Size
+          Development Team Size <span className="text-red-500">*</span>
         </label>
         <select
           name="teamSize"
           id="teamSize"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full py-2.5 px-4 text-gray-800 dark:text-gray-200 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800/50 appearance-none bg-no-repeat bg-right ${errors.teamSize ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235e72e4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, 
+            backgroundSize: '1.5em 1.5em', 
+            paddingRight: '2.5rem', 
+            backgroundPosition: 'right 0.75rem center',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s ease-in-out'
+          }}
           value={formData.teamSize}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         >
           <option value="">Select...</option>
@@ -324,19 +439,31 @@ export function BetaForm() {
           <option value="21-50 developers">21-50 developers</option>
           <option value="50+ developers">50+ developers</option>
         </select>
+        {errors.teamSize && touched.teamSize && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.teamSize}</p>
+        )}
       </div>
       
       <div>
         <label htmlFor="pipelines" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Number of CI/CD Pipelines
+          Number of CI/CD Pipelines <span className="text-red-500">*</span>
         </label>
         <select
           name="pipelines"
           id="pipelines"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full py-2.5 px-4 text-gray-800 dark:text-gray-200 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800/50 appearance-none bg-no-repeat bg-right ${errors.pipelines ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235e72e4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, 
+            backgroundSize: '1.5em 1.5em', 
+            paddingRight: '2.5rem', 
+            backgroundPosition: 'right 0.75rem center',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s ease-in-out'
+          }}
           value={formData.pipelines}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         >
           <option value="">Select...</option>
@@ -345,11 +472,14 @@ export function BetaForm() {
           <option value="21-50">21-50</option>
           <option value="50+">50+</option>
         </select>
+        {errors.pipelines && touched.pipelines && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.pipelines}</p>
+        )}
       </div>
       
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          CI/CD Platforms Used
+          CI/CD Platforms Used <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 gap-2">
           {cicdPlatforms.map((platform) => (
@@ -379,6 +509,9 @@ export function BetaForm() {
             </label>
           ))}
         </div>
+        {errors.platforms && touched.platforms && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.platforms}</p>
+        )}
       </div>
       
       <div>
@@ -389,9 +522,10 @@ export function BetaForm() {
           name="currentChallenges"
           id="currentChallenges"
           rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.currentChallenges ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
           value={formData.currentChallenges}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         />
       </div>
@@ -404,9 +538,10 @@ export function BetaForm() {
           name="securityChallenges"
           id="securityChallenges"
           rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 ${errors.securityChallenges ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
           value={formData.securityChallenges}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         />
       </div>
@@ -443,6 +578,9 @@ export function BetaForm() {
             </label>
           ))}
         </div>
+        {errors.securityTools && touched.securityTools && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.securityTools}</p>
+        )}
       </div>
       
       <div>
@@ -452,9 +590,18 @@ export function BetaForm() {
         <select
           name="howHeard"
           id="howHeard"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700"
+          className={`mt-1 block w-full py-2.5 px-4 text-gray-800 dark:text-gray-200 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800/50 appearance-none bg-no-repeat bg-right ${errors.howHeard ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235e72e4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, 
+            backgroundSize: '1.5em 1.5em', 
+            paddingRight: '2.5rem', 
+            backgroundPosition: 'right 0.75rem center',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s ease-in-out'
+          }}
           value={formData.howHeard}
           onChange={handleChange}
+          onBlur={handleBlur}
           disabled={status === 'submitting'}
         >
           <option value="">Select...</option>
@@ -465,6 +612,9 @@ export function BetaForm() {
           <option value="Word of Mouth">Word of Mouth</option>
           <option value="Other">Other</option>
         </select>
+        {errors.howHeard && touched.howHeard && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-500">{errors.howHeard}</p>
+        )}
       </div>
       
       {status === 'error' && (

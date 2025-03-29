@@ -188,8 +188,12 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Shield className="h-8 w-8 text-primary-600 dark:text-primary-400" />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">PipeWarden</span>
+              <div className="relative h-8 w-8 flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-blue-600 rounded-lg shadow-lg"></div>
+                <div className="absolute inset-0.5 bg-gradient-to-br from-primary-400 to-blue-500 rounded-lg opacity-70"></div>
+                <Lock className="h-4 w-4 text-white relative z-10" />
+              </div>
+              <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-blue-600 dark:from-primary-400 dark:to-blue-400">PipeWarden</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -204,9 +208,9 @@ function App() {
               >
                 {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
-              <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+              <a href="#contact" className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors inline-block">
                 Join Beta
-              </button>
+              </a>
             </div>
 
             {/* Mobile menu button */}
@@ -235,9 +239,9 @@ function App() {
               <a href="#how-it-works" className="block px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">How It Works</a>
               <a href="#pricing" className="block px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">Pricing</a>
               <a href="#contact" className="block px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">Contact</a>
-              <button className="w-full mt-4 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+              <a href="#contact" className="w-full mt-4 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors inline-block text-center">
                 Join Beta
-              </button>
+              </a>
             </div>
           </div>
         )}
@@ -258,9 +262,9 @@ function App() {
                 PipeWarden continuously monitors, scans, and enforces security policies across all your CI/CD platforms - helping you ship secure code faster.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <button className="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors">
+                <a href="#contact" className="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors inline-block">
                   Join Beta Program
-                </button>
+                </a>
                 <button className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                   Watch Demo
                 </button>
