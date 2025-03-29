@@ -511,7 +511,7 @@ export default function App() {
                 Securing development pipelines with intelligent automation.
               </p>
               <p className="mt-4 text-gray-400">
-                Contact us: <a href="mailto:info@pipewarden.com" className="hover:text-white">info@pipewarden.com</a>
+                Contact us: <a href="mailto:info@pipewarden.io" className="hover:text-white">info@pipewarden.io</a>
               </p>
             </div>
             <div>
