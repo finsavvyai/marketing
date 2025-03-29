@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // Google Analytics tracking ID
-const GA_TRACKING_ID = 'G-XXXXXXXXXX'; // Replace with your actual GA4 tracking ID
+const GA_TRACKING_ID = 'G-F33P0YTNHJ'; // PipeWarden GA4 tracking ID
 
 // Interface for window with gtag
 declare global {

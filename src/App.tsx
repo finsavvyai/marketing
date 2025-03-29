@@ -623,7 +623,7 @@ export default function App() {
       <VideoModal 
         isOpen={isVideoModalOpen} 
         onClose={() => setIsVideoModalOpen(false)} 
-        videoSrc="https://pipewarden.s3.eu-west-2.amazonaws.com/pipewarden-video.mp4" 
+        videoSrc="./pipewarden-video.mp4" 
       />
     </>
   );
